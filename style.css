@@ -1,0 +1,922 @@
+/*
+Theme Name: Hospital Classic Theme
+Theme URI: https://github.com/masahiro413/http-127.0.0.1-5504-
+Author: masahiro413
+Author URI: https://github.com/masahiro413
+Description: WordPressクラシックテーマ（病院向けWebサイト）。テンプレート階層設計・動的コンテンツ出力・フックによるカスタマイズ・保守性を意識したコード設計を実装。
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.5
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: hospital-theme
+Tags: custom-menu, featured-images, responsive-layout, translation-ready
+*/
+
+/* =========================================================
+   Reset & Base
+   ========================================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    color: #333333;
+    background-color: #f9f9f9;
+    line-height: 1.8;
+}
+
+a {
+    color: #005bac;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #003f7d;
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+/* =========================================================
+   Layout
+   ========================================================= */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-content {
+    flex: 1;
+    padding: 40px 0;
+}
+
+.content-area {
+    max-width: 720px;
+}
+
+.two-column {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.two-column .content-area {
+    flex: 1;
+}
+
+.two-column .widget-area {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+.site-header {
+    background-color: #ffffff;
+    border-bottom: 3px solid #005bac;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.site-header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.site-branding {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.site-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.site-title a {
+    color: #005bac;
+    text-decoration: none;
+}
+
+.site-title a:hover {
+    color: #003f7d;
+    text-decoration: none;
+}
+
+.site-description {
+    font-size: 0.8rem;
+    color: #666666;
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+.main-navigation ul {
+    display: flex;
+    gap: 0;
+    list-style: none;
+}
+
+.main-navigation ul li a {
+    display: block;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333333;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 4px;
+}
+
+.main-navigation ul li a:hover,
+.main-navigation ul li.current-menu-item > a {
+    background-color: #005bac;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Hamburger Menu */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #333333;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* =========================================================
+   Hero / Page Header
+   ========================================================= */
+.page-header {
+    background: linear-gradient(135deg, #005bac 0%, #0079d3 100%);
+    color: #ffffff;
+    padding: 48px 0;
+    margin-bottom: 40px;
+}
+
+.page-header .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.page-header .page-description {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+/* =========================================================
+   Breadcrumbs
+   ========================================================= */
+.breadcrumbs {
+    font-size: 0.82rem;
+    color: #999999;
+    margin-bottom: 24px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.breadcrumbs a {
+    color: #005bac;
+}
+
+.breadcrumbs span {
+    margin: 0 6px;
+}
+
+/* =========================================================
+   Post / Article Cards
+   ========================================================= */
+.posts-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+.post-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.post-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.post-card .post-thumbnail {
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.post-card .post-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-card:hover .post-thumbnail img {
+    transform: scale(1.04);
+}
+
+.post-card .post-body {
+    padding: 24px;
+}
+
+.post-card .post-meta {
+    font-size: 0.8rem;
+    color: #999999;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.post-card .post-category {
+    background-color: #005bac;
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.post-card .post-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.post-card .post-title a {
+    color: #333333;
+}
+
+.post-card .post-title a:hover {
+    color: #005bac;
+    text-decoration: none;
+}
+
+.post-card .post-excerpt {
+    font-size: 0.88rem;
+    color: #666666;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   Single Post
+   ========================================================= */
+.single-post-header {
+    margin-bottom: 32px;
+}
+
+.single-post-header .post-meta {
+    font-size: 0.82rem;
+    color: #999999;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.single-post-header .post-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #222222;
+    margin-bottom: 16px;
+}
+
+.single-post-header .post-thumbnail {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.entry-content {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: #333333;
+}
+
+.entry-content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #005bac;
+    border-left: 4px solid #005bac;
+    padding-left: 12px;
+    margin: 40px 0 16px;
+}
+
+.entry-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.entry-content p {
+    margin-bottom: 20px;
+}
+
+.entry-content ul,
+.entry-content ol {
+    margin: 0 0 20px 24px;
+    list-style: disc;
+}
+
+.entry-content ol {
+    list-style: decimal;
+}
+
+.entry-content li {
+    margin-bottom: 6px;
+}
+
+.entry-content blockquote {
+    border-left: 4px solid #005bac;
+    background: #f0f6ff;
+    padding: 16px 20px;
+    margin: 24px 0;
+    color: #555555;
+    font-style: italic;
+    border-radius: 0 6px 6px 0;
+}
+
+.entry-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.entry-content th,
+.entry-content td {
+    border: 1px solid #dddddd;
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.entry-content th {
+    background-color: #005bac;
+    color: #ffffff;
+}
+
+.entry-content tr:nth-child(even) td {
+    background-color: #f5f9ff;
+}
+
+/* =========================================================
+   Tags
+   ========================================================= */
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 32px 0 24px;
+}
+
+.post-tags .tag-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #666666;
+    margin-right: 4px;
+}
+
+.post-tags a {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #555555;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.post-tags a:hover {
+    background-color: #005bac;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* =========================================================
+   SNS Share Buttons
+   ========================================================= */
+.sns-share {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 32px 0;
+    text-align: center;
+}
+
+.sns-share .sns-share-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555555;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sns-share-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.sns-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.sns-share-btn:hover {
+    opacity: 0.85;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.sns-share-btn.twitter { background-color: #1da1f2; }
+.sns-share-btn.facebook { background-color: #1877f2; }
+.sns-share-btn.line { background-color: #06c755; }
+
+/* =========================================================
+   Related Posts
+   ========================================================= */
+.related-posts {
+    margin-top: 48px;
+}
+
+.related-posts .section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 2px solid #005bac;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    color: #222222;
+}
+
+.related-posts-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.related-post-item {
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.related-post-item a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.related-post-item img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.related-post-item .related-post-title {
+    padding: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #333333;
+}
+
+.related-post-item:hover .related-post-title {
+    color: #005bac;
+}
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+.posts-navigation {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
+}
+
+.posts-navigation .nav-links {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.posts-navigation .page-numbers {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #005bac;
+    border: 1px solid #005bac;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.posts-navigation .page-numbers:hover,
+.posts-navigation .page-numbers.current {
+    background-color: #005bac;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.posts-navigation .page-numbers.dots {
+    border: none;
+    cursor: default;
+}
+
+/* =========================================================
+   Archive Header
+   ========================================================= */
+.archive-header {
+    margin-bottom: 32px;
+}
+
+.archive-header .archive-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #222222;
+    margin-bottom: 8px;
+}
+
+.archive-header .archive-description {
+    font-size: 0.9rem;
+    color: #666666;
+}
+
+/* =========================================================
+   Sidebar Widgets
+   ========================================================= */
+.widget-area {
+    position: sticky;
+    top: 100px;
+}
+
+.widget {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.widget-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #222222;
+    border-bottom: 2px solid #005bac;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.widget ul {
+    list-style: none;
+}
+
+.widget ul li {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 8px 0;
+}
+
+.widget ul li:last-child {
+    border-bottom: none;
+}
+
+.widget ul li a {
+    font-size: 0.88rem;
+    color: #444444;
+}
+
+.widget ul li a:hover {
+    color: #005bac;
+    text-decoration: none;
+}
+
+/* =========================================================
+   Page (Fixed Pages)
+   ========================================================= */
+.page-content {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.page-content .page-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #222222;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.site-footer {
+    background-color: #1a2d4a;
+    color: #cccccc;
+    padding: 48px 0 0;
+}
+
+.footer-widgets {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 40px;
+}
+
+.footer-widget-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.footer-widget p,
+.footer-widget li {
+    font-size: 0.85rem;
+    line-height: 1.8;
+}
+
+.footer-widget a {
+    color: #aaccee;
+}
+
+.footer-widget a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-nav {
+    padding: 16px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.footer-nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.footer-nav ul li a {
+    font-size: 0.82rem;
+    color: #aaaaaa;
+}
+
+.footer-nav ul li a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.site-info {
+    background-color: #111e2e;
+    padding: 16px 0;
+    text-align: center;
+}
+
+.site-info p {
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+/* =========================================================
+   No Content / 404
+   ========================================================= */
+.no-results,
+.error-404 {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.no-results .page-title,
+.error-404 .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 16px;
+}
+
+.no-results p,
+.error-404 p {
+    color: #666666;
+    font-size: 0.95rem;
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #005bac;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #003f7d;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: #005bac;
+    border: 2px solid #005bac;
+}
+
+.btn-outline:hover {
+    background-color: #005bac;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* =========================================================
+   Utilities
+   ========================================================= */
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.alignleft {
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.alignright {
+    float: right;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 768px) {
+    .two-column {
+        flex-direction: column;
+    }
+
+    .two-column .widget-area {
+        width: 100%;
+        position: static;
+    }
+
+    .site-header .container {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .main-navigation {
+        width: 100%;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease;
+    }
+
+    .main-navigation.is-active {
+        max-height: 400px;
+    }
+
+    .main-navigation ul {
+        flex-direction: column;
+        gap: 4px;
+        padding-bottom: 12px;
+    }
+
+    .related-posts-list {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header .page-title {
+        font-size: 1.5rem;
+    }
+
+    .single-post-header .post-title {
+        font-size: 1.4rem;
+    }
+
+    .page-content {
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sns-share-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .posts-navigation .nav-links {
+        flex-wrap: wrap;
+    }
+}
